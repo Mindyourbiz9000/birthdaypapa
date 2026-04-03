@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,51 +9,41 @@ export async function POST(req: NextRequest) {
     const { guestName, menuSelections } = body;
 
     if (!guestName || !menuSelections) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
-    const menuHtml = Object.entries(menuSelections)
-      .map(([meal, choice]) => `<tr><td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:bold;">${meal}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;">${choice}</td></tr>`)
+    const menuRows = Object.entries(menuSelections)
+      .map(([label, value]) => `
+        <tr>
+          <td style="padding:10px 14px;border-bottom:1px solid #eee;font-weight:bold;color:#5a6e3a;width:35%;">${label}</td>
+          <td style="padding:10px 14px;border-bottom:1px solid #eee;color:#3b2f1e;">${value}</td>
+        </tr>`)
       .join("");
 
-    const htmlContent = `
-      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-        <h2 style="color:#5a6e3a;">🎂 Mes 70 Printemps — Sélection de Menu</h2>
-        <p><strong>Invité(e) :</strong> ${guestName}</p>
-        <h3 style="color:#6b4c2a;">Sélections du menu :</h3>
-        <table style="width:100%;border-collapse:collapse;margin-top:12px;">
-          ${menuHtml}
-        </table>
-        <p style="margin-top:20px;color:#888;font-size:0.85rem;">Envoyé depuis le site Mes 70 Printemps</p>
-      </div>
-    `;
-
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    await resend.emails.send({
+      from: "Mes 70 Printemps <onboarding@resend.dev>",
       to: "thomas.barvaux@gmail.com",
       subject: `Menu — ${guestName} — Mes 70 Printemps`,
-      html: htmlContent,
+      html: `
+        <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:24px;background:#fefcf3;">
+          <div style="background:#5a6e3a;color:white;padding:20px 24px;border-radius:10px 10px 0 0;text-align:center;">
+            <h2 style="margin:0;font-size:1.4rem;">🎂 Mes 70 Printemps</h2>
+            <p style="margin:6px 0 0;opacity:0.8;font-size:0.9rem;">Sélection de menu — Vendredi 15 mai 2026</p>
+          </div>
+          <div style="background:white;padding:24px;border-radius:0 0 10px 10px;border:1px solid #e0d8c4;">
+            <p style="color:#5a4a3a;margin-bottom:16px;"><strong>Invité(e) :</strong> ${guestName}</p>
+            <table style="width:100%;border-collapse:collapse;">
+              ${menuRows}
+            </table>
+          </div>
+          <p style="text-align:center;color:#aaa;font-size:0.8rem;margin-top:16px;">Envoyé depuis le site Mes 70 Printemps</p>
+        </div>
+      `,
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Email error:", error);
-    return NextResponse.json(
-      { error: "Failed to send email" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
   }
 }
