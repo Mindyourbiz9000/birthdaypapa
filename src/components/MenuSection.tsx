@@ -91,119 +91,123 @@ export default function MenuSection({ onSubmitted }: MenuSectionProps) {
 
       <div style={{ background: "white", borderRadius: "0 0 12px 12px", boxShadow: "0 2px 12px rgba(0,0,0,0.08)", padding: "32px 24px" }}>
         <form onSubmit={handleSubmit}>
-          <p style={{ textAlign: "center", color: "#555", marginBottom: "28px", fontSize: "0.95rem" }}>
-            Sélectionnez <strong>une entrée</strong> et <strong>un plat</strong> pour le menu adulte,<br />et/ou un <strong>plat enfant</strong>.
-          </p>
 
-          {/* Entrées */}
-          <h3 style={{ textAlign: "center", fontFamily: "'Playfair Display', Georgia, serif", color: "var(--olive)", marginBottom: "16px", fontSize: "1.3rem" }}>
-            — Entrées —
-          </h3>
-          {entrees.map(item => (
-            <label key={item.id} style={{
-              display: "block", border: selectedEntree === item.id ? "2px solid var(--olive)" : "1.5px solid #e0d8c4",
-              borderRadius: "10px", padding: "16px", marginBottom: "10px", cursor: "pointer",
-              background: selectedEntree === item.id ? "rgba(90,110,58,0.05)" : "white", transition: "all 0.15s"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontWeight: 700, color: "var(--brown)", marginBottom: "4px" }}>{item.label}</p>
-                  <p style={{ fontSize: "0.82rem", color: "#7a6a5a" }}>{item.desc}</p>
-                </div>
-                <span style={{ color: "var(--gold)", fontWeight: 700, whiteSpace: "nowrap", fontSize: "0.95rem" }}>{item.price}</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "10px" }}>
-                <input type="radio" name="entree" value={item.id} checked={selectedEntree === item.id} onChange={() => setSelectedEntree(item.id)} style={{ accentColor: "var(--olive)" }} />
-                <span style={{ fontSize: "0.85rem", color: "#666" }}>Mon choix</span>
-              </div>
-            </label>
-          ))}
-
-          {/* Plats */}
-          <h3 style={{ textAlign: "center", fontFamily: "'Playfair Display', Georgia, serif", color: "var(--olive)", marginBottom: "16px", fontSize: "1.3rem", marginTop: "28px" }}>
-            — Plats —
-          </h3>
-          {plats.map(item => (
-            <label key={item.id} style={{
-              display: "block", border: selectedPlat === item.id ? "2px solid var(--olive)" : "1.5px solid #e0d8c4",
-              borderRadius: "10px", padding: "16px", marginBottom: "10px", cursor: "pointer",
-              background: selectedPlat === item.id ? "rgba(90,110,58,0.05)" : "white", transition: "all 0.15s"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontWeight: 700, color: "var(--brown)", marginBottom: "4px" }}>{item.label}</p>
-                  <p style={{ fontSize: "0.82rem", color: "#7a6a5a", fontStyle: "italic" }}>{item.desc}</p>
-                </div>
-                <span style={{ color: "var(--gold)", fontWeight: 700, whiteSpace: "nowrap", fontSize: "0.95rem" }}>{item.price}</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "10px" }}>
-                <input type="radio" name="plat" value={item.id} checked={selectedPlat === item.id} onChange={() => setSelectedPlat(item.id)} style={{ accentColor: "var(--olive)" }} />
-                <span style={{ fontSize: "0.85rem", color: "#666" }}>Mon choix</span>
-              </div>
-            </label>
-          ))}
-
-          {/* Plats Enfants */}
-          <h3 style={{ textAlign: "center", fontFamily: "'Playfair Display', Georgia, serif", color: "var(--orange)", marginBottom: "16px", fontSize: "1.3rem", marginTop: "28px" }}>
-            — 👶 Plats Enfants —
-          </h3>
-          <div style={{ border: wantsChildMeal ? "2px solid var(--orange)" : "2px dashed #e0c880", borderRadius: "12px", padding: "20px", background: "#fff9ec" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", marginBottom: wantsChildMeal ? "16px" : "0" }}>
-              <input
-                type="checkbox"
-                checked={wantsChildMeal}
-                onChange={e => { setWantsChildMeal(e.target.checked); if (!e.target.checked) { setSelectedPlatEnfant(""); setChildName(""); } }}
-                style={{ width: "20px", height: "20px", accentColor: "var(--orange)" }}
-              />
-              <span style={{ fontWeight: 700, color: "var(--brown)", fontSize: "1rem" }}>Je souhaite aussi commander un plat enfant</span>
-            </label>
-
-            {wantsChildMeal && (
-              <>
-                <p style={{ textAlign: "center", color: "var(--orange)", fontStyle: "italic", fontSize: "0.88rem", marginBottom: "16px" }}>
-                  Menu enfant à 12,00 € — Sélectionnez le plat souhaité.<br />Un e-mail séparé sera généré pour l'enfant.
-                </p>
-
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontWeight: 700, color: "var(--brown)", marginBottom: "6px", fontSize: "0.9rem" }}>
-                    👶 Prénom de l'enfant *
-                  </label>
-                  <input
-                    type="text"
-                    value={childName}
-                    onChange={e => setChildName(e.target.value)}
-                    placeholder="Prénom de l'enfant"
-                    required={wantsChildMeal}
-                    style={{ width: "100%", padding: "10px 14px", borderRadius: "8px", border: "1.5px solid #e0d8c4", fontSize: "0.95rem", boxSizing: "border-box" }}
-                  />
-                </div>
-
-                {platsEnfants.map(item => (
-                  <label key={item.id} style={{
-                    display: "block", border: selectedPlatEnfant === item.id ? "2px solid var(--orange)" : "1.5px solid #e0c880",
-                    borderRadius: "10px", padding: "14px", marginBottom: "8px", cursor: "pointer",
-                    background: selectedPlatEnfant === item.id ? "#fff3d6" : "white"
-                  }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <p style={{ fontWeight: 700, color: "var(--brown)", fontSize: "0.95rem" }}>{item.label}</p>
-                      <span style={{ color: "var(--orange)", fontWeight: 700, fontSize: "0.9rem" }}>{item.price}</span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px" }}>
-                      <input type="radio" name="enfant" value={item.id} checked={selectedPlatEnfant === item.id} onChange={() => setSelectedPlatEnfant(item.id)} style={{ accentColor: "var(--orange)" }} />
-                      <span style={{ fontSize: "0.85rem", color: "#666" }}>Mon choix</span>
-                    </div>
-                  </label>
-                ))}
-
-                <div style={{ background: "#f0f4e8", border: "1px solid #c8d8a8", borderRadius: "8px", padding: "12px", marginTop: "8px" }}>
-                  <p style={{ fontSize: "0.83rem", color: "#5a6e3a", textAlign: "center" }}>
-                    ℹ️ Quand un plat enfant est sélectionné, l'entrée et le plat adulte deviennent <strong>optionnels</strong>.<br />
-                    Vous pouvez les sélectionner si vous commandez aussi pour un adulte.
-                  </p>
-                </div>
-              </>
-            )}
+          {/* Step 1: menu type */}
+          <div style={{ marginBottom: "28px" }}>
+            <p style={{ textAlign: "center", fontWeight: 700, color: "var(--brown)", marginBottom: "12px", fontSize: "1rem" }}>
+              Quel type de menu souhaitez-vous ?
+            </p>
+            <div style={{ display: "flex", gap: "12px" }}>
+              <label style={{
+                flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                border: !wantsChildMeal ? "2px solid var(--olive)" : "1.5px solid #e0d8c4",
+                borderRadius: "10px", padding: "14px", cursor: "pointer",
+                background: !wantsChildMeal ? "rgba(90,110,58,0.07)" : "white", transition: "all 0.15s",
+                fontWeight: 700, color: !wantsChildMeal ? "var(--olive)" : "#888"
+              }}>
+                <input type="radio" name="menuType" checked={!wantsChildMeal}
+                  onChange={() => { setWantsChildMeal(false); setSelectedPlatEnfant(""); setChildName(""); }}
+                  style={{ accentColor: "var(--olive)" }} />
+                🍽️ Menu adulte
+              </label>
+              <label style={{
+                flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                border: wantsChildMeal ? "2px solid var(--orange)" : "1.5px solid #e0d8c4",
+                borderRadius: "10px", padding: "14px", cursor: "pointer",
+                background: wantsChildMeal ? "#fff3d6" : "white", transition: "all 0.15s",
+                fontWeight: 700, color: wantsChildMeal ? "var(--orange)" : "#888"
+              }}>
+                <input type="radio" name="menuType" checked={wantsChildMeal}
+                  onChange={() => { setWantsChildMeal(true); setSelectedEntree(""); setSelectedPlat(""); }}
+                  style={{ accentColor: "var(--orange)" }} />
+                👶 Menu enfant
+              </label>
+            </div>
           </div>
+
+          {/* Adult menu */}
+          {!wantsChildMeal && (<>
+            <h3 style={{ textAlign: "center", fontFamily: "'Playfair Display', Georgia, serif", color: "var(--olive)", marginBottom: "16px", fontSize: "1.3rem" }}>
+              — Entrées —
+            </h3>
+            {entrees.map(item => (
+              <label key={item.id} style={{
+                display: "block", border: selectedEntree === item.id ? "2px solid var(--olive)" : "1.5px solid #e0d8c4",
+                borderRadius: "10px", padding: "16px", marginBottom: "10px", cursor: "pointer",
+                background: selectedEntree === item.id ? "rgba(90,110,58,0.05)" : "white", transition: "all 0.15s"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontWeight: 700, color: "var(--brown)", marginBottom: "4px" }}>{item.label}</p>
+                    <p style={{ fontSize: "0.82rem", color: "#7a6a5a" }}>{item.desc}</p>
+                  </div>
+                  <span style={{ color: "var(--gold)", fontWeight: 700, whiteSpace: "nowrap", fontSize: "0.95rem" }}>{item.price}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "10px" }}>
+                  <input type="radio" name="entree" value={item.id} checked={selectedEntree === item.id} onChange={() => setSelectedEntree(item.id)} style={{ accentColor: "var(--olive)" }} />
+                  <span style={{ fontSize: "0.85rem", color: "#666" }}>Mon choix</span>
+                </div>
+              </label>
+            ))}
+
+            <h3 style={{ textAlign: "center", fontFamily: "'Playfair Display', Georgia, serif", color: "var(--olive)", marginBottom: "16px", fontSize: "1.3rem", marginTop: "28px" }}>
+              — Plats —
+            </h3>
+            {plats.map(item => (
+              <label key={item.id} style={{
+                display: "block", border: selectedPlat === item.id ? "2px solid var(--olive)" : "1.5px solid #e0d8c4",
+                borderRadius: "10px", padding: "16px", marginBottom: "10px", cursor: "pointer",
+                background: selectedPlat === item.id ? "rgba(90,110,58,0.05)" : "white", transition: "all 0.15s"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontWeight: 700, color: "var(--brown)", marginBottom: "4px" }}>{item.label}</p>
+                    <p style={{ fontSize: "0.82rem", color: "#7a6a5a", fontStyle: "italic" }}>{item.desc}</p>
+                  </div>
+                  <span style={{ color: "var(--gold)", fontWeight: 700, whiteSpace: "nowrap", fontSize: "0.95rem" }}>{item.price}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "10px" }}>
+                  <input type="radio" name="plat" value={item.id} checked={selectedPlat === item.id} onChange={() => setSelectedPlat(item.id)} style={{ accentColor: "var(--olive)" }} />
+                  <span style={{ fontSize: "0.85rem", color: "#666" }}>Mon choix</span>
+                </div>
+              </label>
+            ))}
+          </>)}
+
+          {/* Children menu */}
+          {wantsChildMeal && (<>
+            <p style={{ textAlign: "center", color: "var(--orange)", fontStyle: "italic", fontSize: "0.88rem", marginBottom: "16px" }}>
+              Menu enfant à 12,00 € — Sélectionnez le plat souhaité.
+            </p>
+            <div style={{ marginBottom: "16px" }}>
+              <label style={{ display: "block", fontWeight: 700, color: "var(--brown)", marginBottom: "6px", fontSize: "0.9rem" }}>
+                👶 Prénom de l'enfant *
+              </label>
+              <input
+                type="text"
+                value={childName}
+                onChange={e => setChildName(e.target.value)}
+                placeholder="Prénom de l'enfant"
+                style={{ width: "100%", padding: "10px 14px", borderRadius: "8px", border: "1.5px solid #e0d8c4", fontSize: "0.95rem", boxSizing: "border-box" }}
+              />
+            </div>
+            {platsEnfants.map(item => (
+              <label key={item.id} style={{
+                display: "block", border: selectedPlatEnfant === item.id ? "2px solid var(--orange)" : "1.5px solid #e0c880",
+                borderRadius: "10px", padding: "14px", marginBottom: "8px", cursor: "pointer",
+                background: selectedPlatEnfant === item.id ? "#fff3d6" : "white"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <p style={{ fontWeight: 700, color: "var(--brown)", fontSize: "0.95rem" }}>{item.label}</p>
+                  <span style={{ color: "var(--orange)", fontWeight: 700, fontSize: "0.9rem" }}>{item.price}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px" }}>
+                  <input type="radio" name="enfant" value={item.id} checked={selectedPlatEnfant === item.id} onChange={() => setSelectedPlatEnfant(item.id)} style={{ accentColor: "var(--orange)" }} />
+                  <span style={{ fontSize: "0.85rem", color: "#666" }}>Mon choix</span>
+                </div>
+              </label>
+            ))}
+          </>)}
 
           {/* Guest Info */}
           <div style={{ background: "var(--cream)", border: "1.5px solid var(--cream-dark)", borderRadius: "12px", padding: "24px", marginTop: "28px" }}>
