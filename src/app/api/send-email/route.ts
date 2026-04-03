@@ -20,26 +20,40 @@ export async function POST(req: NextRequest) {
         </tr>`)
       .join("");
 
-    await resend.emails.send({
-      from: "Mes 70 Printemps <onboarding@resend.dev>",
-      to: ["thomas.barvaux@gmail.com", "barvaux.despontin@gmail.com"],
-      subject: `Menu — ${guestName} — Mes 70 Printemps`,
-      html: `
-        <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:24px;background:#fefcf3;">
-          <div style="background:#5a6e3a;color:white;padding:20px 24px;border-radius:10px 10px 0 0;text-align:center;">
-            <h2 style="margin:0;font-size:1.4rem;">🎂 Mes 70 Printemps</h2>
-            <p style="margin:6px 0 0;opacity:0.8;font-size:0.9rem;">Sélection de menu — Vendredi 15 mai 2026</p>
-          </div>
-          <div style="background:white;padding:24px;border-radius:0 0 10px 10px;border:1px solid #e0d8c4;">
-            <p style="color:#5a4a3a;margin-bottom:16px;"><strong>Invité(e) :</strong> ${guestName}</p>
-            <table style="width:100%;border-collapse:collapse;">
-              ${menuRows}
-            </table>
-          </div>
-          <p style="text-align:center;color:#aaa;font-size:0.8rem;margin-top:16px;">Envoyé depuis le site Mes 70 Printemps</p>
+    const emailHtml = `
+      <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:24px;background:#fefcf3;">
+        <div style="background:#5a6e3a;color:white;padding:20px 24px;border-radius:10px 10px 0 0;text-align:center;">
+          <h2 style="margin:0;font-size:1.4rem;">🎂 Mes 70 Printemps</h2>
+          <p style="margin:6px 0 0;opacity:0.8;font-size:0.9rem;">Sélection de menu — Vendredi 15 mai 2026</p>
         </div>
-      `,
-    });
+        <div style="background:white;padding:24px;border-radius:0 0 10px 10px;border:1px solid #e0d8c4;">
+          <p style="color:#5a4a3a;margin-bottom:16px;"><strong>Invité(e) :</strong> ${guestName}</p>
+          <table style="width:100%;border-collapse:collapse;">
+            ${menuRows}
+          </table>
+        </div>
+        <p style="text-align:center;color:#aaa;font-size:0.8rem;margin-top:16px;">Envoyé depuis le site Mes 70 Printemps</p>
+      </div>
+    `;
+
+    const recipients = ["thomas.barvaux@gmail.com", "barvaux.despontin@gmail.com"];
+
+    const results = await Promise.all(
+      recipients.map((to) =>
+        resend.emails.send({
+          from: "Mes 70 Printemps <onboarding@resend.dev>",
+          to,
+          subject: `Menu — ${guestName} — Mes 70 Printemps`,
+          html: emailHtml,
+        })
+      )
+    );
+
+    const errors = results.filter((r) => r.error);
+    if (errors.length > 0) {
+      console.error("Resend errors:", JSON.stringify(errors));
+      return NextResponse.json({ error: "Some emails failed to send", details: errors }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
