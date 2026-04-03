@@ -6,6 +6,7 @@ import MenuSection from "@/components/MenuSection";
 
 export default function Home() {
   const [menuSubmitted, setMenuSubmitted] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   return (
     <main style={{ background: "var(--background)", minHeight: "100vh" }}>
@@ -25,8 +26,43 @@ export default function Home() {
       </header>
 
       <div style={{ maxWidth: "720px", margin: "0 auto", padding: "0 16px" }}>
-        {/* Camp de Base */}
+        {/* Menu button + Camp de Base */}
         <section style={{ textAlign: "center", padding: "40px 0 32px" }}>
+          {/* Menu CTA button */}
+          <div style={{ marginBottom: "28px" }}>
+            <button
+              onClick={() => setShowMenu(true)}
+              style={{
+                background: "var(--olive)", color: "white", border: "none", borderRadius: "10px",
+                padding: "14px 32px", fontSize: "1rem", fontWeight: 700, cursor: "pointer",
+                boxShadow: "0 4px 14px rgba(90,110,58,0.3)", display: "inline-flex", alignItems: "center", gap: "8px"
+              }}
+            >
+              🍽️ Choisir mon menu — Vendredi 15 mai
+            </button>
+          </div>
+
+          {/* Menu modal overlay */}
+          {showMenu && !menuSubmitted && (
+            <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 100, display: "flex", alignItems: "flex-start", justifyContent: "center", overflowY: "auto", padding: "24px 16px" }}>
+              <div style={{ background: "var(--background)", borderRadius: "16px", maxWidth: "680px", width: "100%", position: "relative" }}>
+                <button
+                  onClick={() => setShowMenu(false)}
+                  style={{ position: "absolute", top: "12px", right: "16px", background: "none", border: "none", fontSize: "1.5rem", cursor: "pointer", color: "#666", zIndex: 10 }}
+                >
+                  ✕
+                </button>
+                <MenuSection onSubmitted={() => { setMenuSubmitted(true); setShowMenu(false); }} />
+              </div>
+            </div>
+          )}
+
+          {menuSubmitted && (
+            <div style={{ background: "#f0f7e8", border: "2px solid var(--olive)", borderRadius: "10px", padding: "12px 20px", display: "inline-flex", alignItems: "center", gap: "8px", marginBottom: "28px", fontSize: "0.95rem", color: "var(--olive)", fontWeight: 700 }}>
+              ✅ Votre menu a bien été envoyé !
+            </div>
+          )}
+
           <h2 style={{ color: "var(--brown)", fontSize: "1.5rem", marginBottom: "8px" }}>
             📍 Notre Camp de Base
           </h2>
@@ -69,16 +105,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Menu Selection */}
-        {!menuSubmitted ? (
-          <MenuSection onSubmitted={() => setMenuSubmitted(true)} />
-        ) : (
-          <section style={{ background: "var(--cream)", border: "2px solid var(--cream-dark)", borderRadius: "16px", padding: "40px 32px", textAlign: "center", marginBottom: "48px" }}>
-            <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🎉</div>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "var(--olive)", marginBottom: "12px" }}>Merci pour votre sélection !</h2>
-            <p style={{ color: "#666" }}>Votre choix de menu a bien été envoyé. À très bientôt pour ce beau week-end !</p>
-          </section>
-        )}
 
         {/* Confirmation Section */}
         <section style={{ background: "var(--cream)", border: "2px dashed var(--gold)", borderRadius: "16px", padding: "32px", textAlign: "center", marginBottom: "48px" }}>

@@ -33,14 +33,12 @@ export default function MenuSection({ onSubmitted }: MenuSectionProps) {
   const [childName, setChildName] = useState("");
   const [selectedPlatEnfant, setSelectedPlatEnfant] = useState("");
   const [guestName, setGuestName] = useState("");
-  const [guestEmail, setGuestEmail] = useState("");
   const [allergies, setAllergies] = useState("");
   const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const isAdultRequired = !wantsChildMeal || (wantsChildMeal && (selectedEntree || selectedPlat));
-  const canSubmit = guestName.trim() && guestEmail.trim() &&
+  const canSubmit = guestName.trim() &&
     (wantsChildMeal
       ? selectedPlatEnfant && childName.trim()
       : selectedEntree && selectedPlat);
@@ -65,7 +63,6 @@ export default function MenuSection({ onSubmitted }: MenuSectionProps) {
     }
     if (allergies) menuSelections["Allergies / régimes"] = allergies;
     if (remarks) menuSelections["Remarques"] = remarks;
-    if (guestEmail) menuSelections["E-mail de l'invité"] = guestEmail;
 
     try {
       const res = await fetch("/api/send-email", {
@@ -224,19 +221,6 @@ export default function MenuSection({ onSubmitted }: MenuSectionProps) {
                 required
                 style={{ width: "100%", padding: "10px 14px", borderRadius: "8px", border: "1.5px solid #e0d8c4", fontSize: "0.95rem", boxSizing: "border-box" }}
               />
-            </div>
-
-            <div style={{ marginBottom: "16px" }}>
-              <label style={{ display: "block", fontWeight: 700, fontSize: "0.9rem", color: "var(--brown)", marginBottom: "6px" }}>Votre adresse e-mail *</label>
-              <input
-                type="email"
-                value={guestEmail}
-                onChange={e => setGuestEmail(e.target.value)}
-                placeholder="votre@email.com"
-                required
-                style={{ width: "100%", padding: "10px 14px", borderRadius: "8px", border: "1.5px solid #e0d8c4", fontSize: "0.95rem", boxSizing: "border-box" }}
-              />
-              <p style={{ fontSize: "0.8rem", color: "#888", marginTop: "4px" }}>Pour recevoir une copie de confirmation.</p>
             </div>
 
             <div style={{ marginBottom: "16px" }}>
