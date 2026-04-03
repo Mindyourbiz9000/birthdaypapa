@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     await transporter.sendMail({
       from: `"Mes 70 Printemps" <${process.env.GMAIL_USER}>`,
-      to: ["thomas.barvaux@gmail.com", "barvaux.despontin@gmail.com"],
+      to: "thomas.barvaux@gmail.com",
       subject: `Menu — ${guestName} — Mes 70 Printemps`,
       html: `
         <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:24px;background:#fefcf3;">
