@@ -36,26 +36,19 @@ export async function POST(req: NextRequest) {
       </div>
     `;
 
-    const recipients = ["thomas.barvaux@gmail.com", "barvaux.despontin@gmail.com"];
+    const { data, error } = await resend.emails.send({
+      from: "Mes 70 Printemps <onboarding@resend.dev>",
+      to: ["thomas.barvaux@gmail.com", "barvaux.despontin@gmail.com"],
+      subject: `Menu — ${guestName} — Mes 70 Printemps`,
+      html: emailHtml,
+    });
 
-    const results = await Promise.all(
-      recipients.map((to) =>
-        resend.emails.send({
-          from: "Mes 70 Printemps <onboarding@resend.dev>",
-          to,
-          subject: `Menu — ${guestName} — Mes 70 Printemps`,
-          html: emailHtml,
-        })
-      )
-    );
-
-    const errors = results.filter((r) => r.error);
-    if (errors.length > 0) {
-      console.error("Resend errors:", JSON.stringify(errors));
-      return NextResponse.json({ error: "Some emails failed to send", details: errors }, { status: 500 });
+    if (error) {
+      console.error("Resend error:", JSON.stringify(error));
+      return NextResponse.json({ error: "Failed to send email", details: error }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("Email error:", error);
     return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
